@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>reCAPTCHA v3 for webview</title>
+</head>
+<body>
+  <script>
+    {
+      const SITE_KEY = '6LdyC2cUAAAAACGuDKpXeDorzUDWXmdqeg-xy696';
+      const MY_SITE = 'https://recaptcha-demo.appspot.com';
+      const GOOGLE = 'https://www.google.com';
+      const RECAPTCHA_SETUP = 'recaptcha-setup';
+      
+      const isAndroidValid =
+        window.Android &&
+        typeof window.Android.sendData === 'function';
+
+      const isIOSValid =
+        window.webkit &&
+        window.webkit.messageHandlers &&
+        window.webkit.messageHandlers.recaptcha &&
+        typeof window.webkit.messageHandlers.recaptcha.postMessage === 'function';
+      
+      const post =
+        isIOSValid
+          ? (value) => window.webkit.messageHandlers.recaptcha.postMessage(value)
+          : isAndroidValid
+            ? (value) => window.Android.sendData(value)
+            : console.log;
+      
+      const logger = (log) => post({ log });
+
+      const main = () => {
+        window.history.pushState('', '', MY_SITE);
+        grecaptcha.ready(async () => {
+          try {
+            const token = await grecaptcha.execute(SITE_KEY);
+            post({ token });
+          } catch (err) {
+            if (err === null) {
+              err = 'Invalid domain for site key.';
+            }
+            logger(err);
+          }
+        });
+      };
+      
+      window.addEventListener('message', (e) => {
+        if (e.origin === GOOGLE || e.data === RECAPTCHA_SETUP) {
+          main();
+        }
+      });
+      
+      const apiScript = document.createElement('script');
+      apiScript.src = `https://www.google.com/recaptcha/api.js?render=${SITE_KEY}`;
+      document.body.appendChild(apiScript);
+    }
+  </script>
+</body>
+</html>
