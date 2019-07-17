@@ -7,8 +7,7 @@
 <body>
   <script>
     {
-      const SITE_KEY = '6LdyC2cUAAAAACGuDKpXeDorzUDWXmdqeg-xy696';
-      const MY_SITE = 'https://recaptcha-demo.appspot.com';
+      const SITE_KEY = '6Le2F64UAAAAANTjl12_TzXtzqqsWIOYj5efn72r';
       const GOOGLE = 'https://www.google.com';
       const RECAPTCHA_SETUP = 'recaptcha-setup';
       
@@ -32,7 +31,6 @@
       const logger = (log) => post({ log });
 
       const main = () => {
-        window.history.pushState('', '', MY_SITE);
         grecaptcha.ready(async () => {
           try {
             const token = await grecaptcha.execute(SITE_KEY);
